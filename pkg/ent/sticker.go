@@ -23,6 +23,8 @@ type Sticker struct {
 	Latitude float64 `json:"latitude"`
 	// Longitude holds the value of the "longitude" field.
 	Longitude float64 `json:"longitude"`
+	// Edition holds the value of the "edition" field.
+	Edition sticker.Edition `json:"edition"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -63,7 +65,7 @@ func (*Sticker) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullFloat64)
 		case sticker.FieldID:
 			values[i] = new(sql.NullInt64)
-		case sticker.FieldLocationDescription:
+		case sticker.FieldLocationDescription, sticker.FieldEdition:
 			values[i] = new(sql.NullString)
 		case sticker.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -107,6 +109,12 @@ func (s *Sticker) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field longitude", values[i])
 			} else if value.Valid {
 				s.Longitude = value.Float64
+			}
+		case sticker.FieldEdition:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field edition", values[i])
+			} else if value.Valid {
+				s.Edition = sticker.Edition(value.String)
 			}
 		case sticker.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -160,6 +168,8 @@ func (s *Sticker) String() string {
 	builder.WriteString(fmt.Sprintf("%v", s.Latitude))
 	builder.WriteString(", longitude=")
 	builder.WriteString(fmt.Sprintf("%v", s.Longitude))
+	builder.WriteString(", edition=")
+	builder.WriteString(fmt.Sprintf("%v", s.Edition))
 	builder.WriteString(", created_at=")
 	builder.WriteString(s.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

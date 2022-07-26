@@ -24,6 +24,7 @@ func (Sticker) Fields() []ent.Field {
 		field.String("location_description").NotEmpty(),
 		field.Float("latitude"),
 		field.Float("longitude"),
+		field.Enum("edition").Values("original", "original_with_earring", "winter", "train", "mail", "holiday", "other"),
 		field.Time("created_at").Default(time.Now).Immutable(),
 	}
 }

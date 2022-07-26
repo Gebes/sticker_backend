@@ -40,6 +40,7 @@ type StickerMutation struct {
 	addlatitude          *float64
 	longitude            *float64
 	addlongitude         *float64
+	edition              *sticker.Edition
 	created_at           *time.Time
 	clearedFields        map[string]struct{}
 	owner                *string
@@ -295,6 +296,42 @@ func (m *StickerMutation) ResetLongitude() {
 	m.addlongitude = nil
 }
 
+// SetEdition sets the "edition" field.
+func (m *StickerMutation) SetEdition(s sticker.Edition) {
+	m.edition = &s
+}
+
+// Edition returns the value of the "edition" field in the mutation.
+func (m *StickerMutation) Edition() (r sticker.Edition, exists bool) {
+	v := m.edition
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEdition returns the old "edition" field's value of the Sticker entity.
+// If the Sticker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StickerMutation) OldEdition(ctx context.Context) (v sticker.Edition, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEdition is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEdition requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEdition: %w", err)
+	}
+	return oldValue.Edition, nil
+}
+
+// ResetEdition resets all changes to the "edition" field.
+func (m *StickerMutation) ResetEdition() {
+	m.edition = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *StickerMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -389,7 +426,7 @@ func (m *StickerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *StickerMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.location_description != nil {
 		fields = append(fields, sticker.FieldLocationDescription)
 	}
@@ -398,6 +435,9 @@ func (m *StickerMutation) Fields() []string {
 	}
 	if m.longitude != nil {
 		fields = append(fields, sticker.FieldLongitude)
+	}
+	if m.edition != nil {
+		fields = append(fields, sticker.FieldEdition)
 	}
 	if m.created_at != nil {
 		fields = append(fields, sticker.FieldCreatedAt)
@@ -416,6 +456,8 @@ func (m *StickerMutation) Field(name string) (ent.Value, bool) {
 		return m.Latitude()
 	case sticker.FieldLongitude:
 		return m.Longitude()
+	case sticker.FieldEdition:
+		return m.Edition()
 	case sticker.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -433,6 +475,8 @@ func (m *StickerMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldLatitude(ctx)
 	case sticker.FieldLongitude:
 		return m.OldLongitude(ctx)
+	case sticker.FieldEdition:
+		return m.OldEdition(ctx)
 	case sticker.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -464,6 +508,13 @@ func (m *StickerMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLongitude(v)
+		return nil
+	case sticker.FieldEdition:
+		v, ok := value.(sticker.Edition)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEdition(v)
 		return nil
 	case sticker.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -556,6 +607,9 @@ func (m *StickerMutation) ResetField(name string) error {
 		return nil
 	case sticker.FieldLongitude:
 		m.ResetLongitude()
+		return nil
+	case sticker.FieldEdition:
+		m.ResetEdition()
 		return nil
 	case sticker.FieldCreatedAt:
 		m.ResetCreatedAt()

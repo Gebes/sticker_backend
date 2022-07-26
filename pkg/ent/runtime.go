@@ -21,7 +21,7 @@ func init() {
 	// sticker.LocationDescriptionValidator is a validator for the "location_description" field. It is called by the builders before save.
 	sticker.LocationDescriptionValidator = stickerDescLocationDescription.Validators[0].(func(string) error)
 	// stickerDescCreatedAt is the schema descriptor for created_at field.
-	stickerDescCreatedAt := stickerFields[3].Descriptor()
+	stickerDescCreatedAt := stickerFields[4].Descriptor()
 	// sticker.DefaultCreatedAt holds the default value on creation for the created_at field.
 	sticker.DefaultCreatedAt = stickerDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()

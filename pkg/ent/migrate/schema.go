@@ -14,6 +14,7 @@ var (
 		{Name: "location_description", Type: field.TypeString},
 		{Name: "latitude", Type: field.TypeFloat64},
 		{Name: "longitude", Type: field.TypeFloat64},
+		{Name: "edition", Type: field.TypeEnum, Enums: []string{"original", "original_with_earring", "winter", "train", "mail", "holiday", "other"}},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "sticker_owner", Type: field.TypeString},
 	}
@@ -25,7 +26,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "stickers_users_owner",
-				Columns:    []*schema.Column{StickersColumns[5]},
+				Columns:    []*schema.Column{StickersColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

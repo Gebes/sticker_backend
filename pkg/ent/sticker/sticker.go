@@ -3,6 +3,7 @@
 package sticker
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -17,6 +18,8 @@ const (
 	FieldLatitude = "latitude"
 	// FieldLongitude holds the string denoting the longitude field in the database.
 	FieldLongitude = "longitude"
+	// FieldEdition holds the string denoting the edition field in the database.
+	FieldEdition = "edition"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
@@ -38,6 +41,7 @@ var Columns = []string{
 	FieldLocationDescription,
 	FieldLatitude,
 	FieldLongitude,
+	FieldEdition,
 	FieldCreatedAt,
 }
 
@@ -68,3 +72,31 @@ var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 )
+
+// Edition defines the type for the "edition" enum field.
+type Edition string
+
+// Edition values.
+const (
+	EditionOriginal            Edition = "original"
+	EditionOriginalWithEarring Edition = "original_with_earring"
+	EditionWinter              Edition = "winter"
+	EditionTrain               Edition = "train"
+	EditionMail                Edition = "mail"
+	EditionHoliday             Edition = "holiday"
+	EditionOther               Edition = "other"
+)
+
+func (e Edition) String() string {
+	return string(e)
+}
+
+// EditionValidator is a validator for the "edition" field enum values. It is called by the builders before save.
+func EditionValidator(e Edition) error {
+	switch e {
+	case EditionOriginal, EditionOriginalWithEarring, EditionWinter, EditionTrain, EditionMail, EditionHoliday, EditionOther:
+		return nil
+	default:
+		return fmt.Errorf("sticker: invalid enum value for edition field: %q", e)
+	}
+}

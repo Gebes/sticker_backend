@@ -38,15 +38,27 @@ func Listen() error {
 	postValidator.SetTagName("post")
 	patchValidator.SetTagName("patch")
 
-	router.Use(middlewares.Cors(middlewares.AllowAllConfiguration()))
+	router.Use(func(request there.HttpRequest, next there.HttpResponse) there.HttpResponse {
+		return there.WithHeaders(there.MapString{
+			"Access-Control-Allow-Credentials": "true",
+		}, next)
+	})
+	router.Use(middlewares.Cors(middlewares.CorsConfiguration{
+		AccessControlAllowOrigin:  "http://localhost:4200",
+		AccessControlAllowMethods: there.AllMethodsString,
+		AccessControlAllowHeaders: "Accept, Content-Type, Content-Length, Authorization",
+	}))
 
 	router.Group("/auth/discord").
 		Get("/login", DiscordLogin).
 		Get("/callback", DiscordAuthCallback)
 
+	router.Get("/user", UserGet).With(AuthMiddleware)
+
 	router.Group("/sticker").
 		Get("/", StickerGet).With(AuthMiddleware).
-		Post("/", StickerPost).With(AuthMiddleware)
+		Post("/", StickerPost).With(AuthMiddleware).
+		Delete("/", StickerDelete).With(AuthMiddleware)
 
 	return router.Listen(8080)
 }

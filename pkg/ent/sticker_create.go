@@ -39,6 +39,12 @@ func (sc *StickerCreate) SetLongitude(f float64) *StickerCreate {
 	return sc
 }
 
+// SetEdition sets the "edition" field.
+func (sc *StickerCreate) SetEdition(s sticker.Edition) *StickerCreate {
+	sc.mutation.SetEdition(s)
+	return sc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (sc *StickerCreate) SetCreatedAt(t time.Time) *StickerCreate {
 	sc.mutation.SetCreatedAt(t)
@@ -157,6 +163,14 @@ func (sc *StickerCreate) check() error {
 	if _, ok := sc.mutation.Longitude(); !ok {
 		return &ValidationError{Name: "longitude", err: errors.New(`ent: missing required field "Sticker.longitude"`)}
 	}
+	if _, ok := sc.mutation.Edition(); !ok {
+		return &ValidationError{Name: "edition", err: errors.New(`ent: missing required field "Sticker.edition"`)}
+	}
+	if v, ok := sc.mutation.Edition(); ok {
+		if err := sticker.EditionValidator(v); err != nil {
+			return &ValidationError{Name: "edition", err: fmt.Errorf(`ent: validator failed for field "Sticker.edition": %w`, err)}
+		}
+	}
 	if _, ok := sc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Sticker.created_at"`)}
 	}
@@ -213,6 +227,14 @@ func (sc *StickerCreate) createSpec() (*Sticker, *sqlgraph.CreateSpec) {
 			Column: sticker.FieldLongitude,
 		})
 		_node.Longitude = value
+	}
+	if value, ok := sc.mutation.Edition(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: sticker.FieldEdition,
+		})
+		_node.Edition = value
 	}
 	if value, ok := sc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

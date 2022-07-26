@@ -60,6 +60,12 @@ func (su *StickerUpdate) AddLongitude(f float64) *StickerUpdate {
 	return su
 }
 
+// SetEdition sets the "edition" field.
+func (su *StickerUpdate) SetEdition(s sticker.Edition) *StickerUpdate {
+	su.mutation.SetEdition(s)
+	return su
+}
+
 // SetOwnerID sets the "owner" edge to the User entity by ID.
 func (su *StickerUpdate) SetOwnerID(id string) *StickerUpdate {
 	su.mutation.SetOwnerID(id)
@@ -149,6 +155,11 @@ func (su *StickerUpdate) check() error {
 			return &ValidationError{Name: "location_description", err: fmt.Errorf(`ent: validator failed for field "Sticker.location_description": %w`, err)}
 		}
 	}
+	if v, ok := su.mutation.Edition(); ok {
+		if err := sticker.EditionValidator(v); err != nil {
+			return &ValidationError{Name: "edition", err: fmt.Errorf(`ent: validator failed for field "Sticker.edition": %w`, err)}
+		}
+	}
 	if _, ok := su.mutation.OwnerID(); su.mutation.OwnerCleared() && !ok {
 		return errors.New(`ent: clearing a required unique edge "Sticker.owner"`)
 	}
@@ -206,6 +217,13 @@ func (su *StickerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeFloat64,
 			Value:  value,
 			Column: sticker.FieldLongitude,
+		})
+	}
+	if value, ok := su.mutation.Edition(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: sticker.FieldEdition,
 		})
 	}
 	if su.mutation.OwnerCleared() {
@@ -291,6 +309,12 @@ func (suo *StickerUpdateOne) SetLongitude(f float64) *StickerUpdateOne {
 // AddLongitude adds f to the "longitude" field.
 func (suo *StickerUpdateOne) AddLongitude(f float64) *StickerUpdateOne {
 	suo.mutation.AddLongitude(f)
+	return suo
+}
+
+// SetEdition sets the "edition" field.
+func (suo *StickerUpdateOne) SetEdition(s sticker.Edition) *StickerUpdateOne {
+	suo.mutation.SetEdition(s)
 	return suo
 }
 
@@ -390,6 +414,11 @@ func (suo *StickerUpdateOne) check() error {
 			return &ValidationError{Name: "location_description", err: fmt.Errorf(`ent: validator failed for field "Sticker.location_description": %w`, err)}
 		}
 	}
+	if v, ok := suo.mutation.Edition(); ok {
+		if err := sticker.EditionValidator(v); err != nil {
+			return &ValidationError{Name: "edition", err: fmt.Errorf(`ent: validator failed for field "Sticker.edition": %w`, err)}
+		}
+	}
 	if _, ok := suo.mutation.OwnerID(); suo.mutation.OwnerCleared() && !ok {
 		return errors.New(`ent: clearing a required unique edge "Sticker.owner"`)
 	}
@@ -464,6 +493,13 @@ func (suo *StickerUpdateOne) sqlSave(ctx context.Context) (_node *Sticker, err e
 			Type:   field.TypeFloat64,
 			Value:  value,
 			Column: sticker.FieldLongitude,
+		})
+	}
+	if value, ok := suo.mutation.Edition(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: sticker.FieldEdition,
 		})
 	}
 	if suo.mutation.OwnerCleared() {

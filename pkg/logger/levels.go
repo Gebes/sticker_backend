@@ -22,7 +22,7 @@ func init() {
 	if err != nil {
 		Error.Fatalln("Could not initialize log file:", err)
 	}
-	
+
 	output := io.MultiWriter(os.Stdout, logFile)
 	Info.SetOutput(output)
 	Error.SetOutput(output)
