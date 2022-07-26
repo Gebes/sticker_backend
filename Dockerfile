@@ -38,6 +38,5 @@ COPY --from=helper /etc/ssl/certs /etc/ssl/certs
 
 # Copy executabel files with configuration
 COPY --from=helper /app/app /app/app
-COPY --from=builder /app/.env /app/.env
 
 CMD ["./app"]
