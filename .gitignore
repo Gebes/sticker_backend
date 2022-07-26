@@ -1,0 +1,7 @@
+.idea
+.env
+docker-compose.yaml
+postgres.sh
+ca
+.DS_Store
+*.log
