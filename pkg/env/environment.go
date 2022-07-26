@@ -18,7 +18,7 @@ var (
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		logger.Error.Fatalln("Unable to load environment:", err)
+		logger.Error.Println("Unable to load environment file:", err)
 	}
 
 	PostgresDatabase = os.Getenv("POSTGRES_DATABASE")
