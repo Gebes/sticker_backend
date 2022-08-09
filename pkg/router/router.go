@@ -60,6 +60,9 @@ func Listen() error {
 		Post("/", StickerPost).With(AuthMiddleware).
 		Delete("/", StickerDelete).With(AuthMiddleware)
 
+	router.Group("/test").
+		Get("/ip/server", TestIpServerGet)
+
 	return router.Listen(8080)
 }
 
